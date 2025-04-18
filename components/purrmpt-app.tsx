@@ -1,66 +1,49 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Cat, Moon, Sun, Sparkles } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { useTheme } from "next-themes"
-import { SparkleGroup } from "./sparkle"
+import { useState, useEffect } from "react";
+import { Cat, Moon, Sun, Sparkles } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useTheme } from "next-themes";
+import { SparkleGroup } from "./sparkle";
 
 export default function PurrmptApp() {
-  const [promptType, setPromptType] = useState("image")
-  const [idea, setIdea] = useState("")
-  const [generatedPrompt, setGeneratedPrompt] = useState("")
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [copied, setCopied] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [promptType, setPromptType] = useState("image");
+  const [idea, setIdea] = useState("");
+  const [generatedPrompt, setGeneratedPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme } = useTheme();
 
-  // After mounting, we can access the theme
-  useEffect(() => {
-    setMounted(true)
-  }, [])
+  const handleGeneratePrompt = async () => {
+    if (!idea.trim()) return;
 
-  const isDark = mounted && theme === "dark"
+    setIsGenerating(true);
 
-  // Define theme colors based on mode
-  const themeColors = {
-    primaryAccent: isDark ? "#6EE7B7" : "#A78BFA",
-    secondaryAccent: isDark ? "#A78BFA" : "#6EE7B7",
-  }
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: idea }),
+      });
 
-  const handleGeneratePrompt = () => {
-    if (!idea.trim()) return
-
-    setIsGenerating(true)
-
-    // Simulate API call with timeout
-    setTimeout(() => {
-      // Generate different prompts based on type
-      let enhancedPrompt = ""
-
-      if (promptType === "image") {
-        enhancedPrompt = `Create a highly detailed ${idea} with dramatic lighting, 8k resolution, photorealistic textures, and vibrant colors. The composition should be balanced with a clear focal point.`
-      } else if (promptType === "text") {
-        enhancedPrompt = `Write a comprehensive, well-structured, and engaging piece about ${idea}. Include relevant examples, maintain a consistent tone, and ensure logical flow between paragraphs.`
-      } else if (promptType === "code") {
-        enhancedPrompt = `Generate clean, well-commented, and efficient code for ${idea}. Follow best practices, include error handling, and optimize for performance where appropriate.`
-      }
-
-      setGeneratedPrompt(enhancedPrompt)
-      setIsGenerating(false)
-    }, 1500)
-  }
+      const data = await response.json();
+      setGeneratedPrompt(data.result || "Error generating response");
+    } catch (error) {
+      console.error("Error generating response:", error);
+      setGeneratedPrompt("Error generating response");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedPrompt)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  if (!mounted) return null
+    navigator.clipboard.writeText(generatedPrompt);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-300">
@@ -73,10 +56,10 @@ export default function PurrmptApp() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setTheme(isDark ? "light" : "dark")}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="rounded-full hover:bg-primary/10 button-hover-effect"
         >
-          {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           <span className="sr-only">Toggle theme</span>
         </Button>
       </header>
@@ -90,7 +73,7 @@ export default function PurrmptApp() {
               <Sparkles className="h-5 w-5 text-secondary absolute -right-6 -top-2" />
             </h2>
             <div className="absolute inset-0 z-0">
-              <SparkleGroup count={3} colors={[themeColors.primaryAccent, themeColors.secondaryAccent, "#FBBF24"]} />
+              <SparkleGroup count={3} colors={["#6EE7B7", "#A78BFA", "#FBBF24"]} />
             </div>
           </div>
           <p className="text-sm md:text-base text-muted-foreground">
@@ -205,5 +188,5 @@ export default function PurrmptApp() {
         </p>
       </footer>
     </div>
-  )
+  );
 }
