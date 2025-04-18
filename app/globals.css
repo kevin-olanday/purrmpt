@@ -137,3 +137,29 @@
 .font-poppins {
   font-family: "Poppins", sans-serif;
 }
+
+/* Rising Emoji Animation */
+.emoji-animation {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+  animation: rise 2s ease-out forwards;
+}
+
+.emoji-animation span {
+  font-size: 1.5rem;
+  opacity: 1;
+  transform: translateY(0);
+  animation: fade-rise 2s ease-out forwards;
+}
+
+@keyframes fade-rise {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+}
