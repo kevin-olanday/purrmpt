@@ -1,27 +1,21 @@
-import type React from "react";
-import "./globals.css";
-import { ThemeProvider } from "next-themes";
+import { Html, Head, Main, NextScript } from 'next/document';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Document() {
   return (
-    <html lang="en">
-      <head>
+    <Html lang="en">
+      <Head>
         {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
         <meta name="theme-color" content="#ffffff" />
-      </head>
+      </Head>
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
-        </ThemeProvider>
+        <Main />
+        <NextScript />
       </body>
-    </html>
+    </Html>
   );
 }
