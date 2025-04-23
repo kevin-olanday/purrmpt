@@ -512,37 +512,33 @@ export default function PurrmptApp() {
 
               {/* Copy and Send Buttons */}
               {generatedPrompt && (
-                <div className="flex gap-4">
+                <div className="flex flex-wrap gap-4">
+                  {/* Copy Button */}
                   <CopyButton generatedPrompt={generatedPrompt} />
+
+
+
+                  {/* Send to ChatGPT Button */}
                   <Button
                     variant="outline"
-                    className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
+                    className="inline-flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
                     onClick={handleSendToChatGPT}
                   >
                     <Send className="w-4 h-4" />
                     Send to ChatGPT
                   </Button>
 
-                  
-                  {/* Send to Gemini Button */}
-                  <Button
+                                      {/* Share Button */}
+                                      <Button
                     variant="outline"
-                    className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
-                    onClick={handleSendToGemini}
-                  >
-                    <Send className="w-4 h-4" />
-                    Send to Gemini
-                  </Button>
-
-                  {/* Share Button */}
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
+                    className="inline-flex items-center gap-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
                     onClick={handleSharePrompt}
                   >
                     <Share2 className="w-4 h-4" />
                     Share
                   </Button>
+
+
                 </div>
               )}
             </div>
