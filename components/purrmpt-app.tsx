@@ -1,25 +1,185 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Cat, Moon, Sun, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Cat, Moon, Sun, Sparkles, Settings, SlidersHorizontal, Text, Brain, Wand2, User, Palette, Clipboard, Send, Paintbrush, Film, Cpu, Droplet, Layers, Rocket, Cloud, Code, Shield, Zap, FileText, Star, BookOpen, PenTool, Smile, Share2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "next-themes";
-import { SparkleGroup } from "./sparkle";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
+import { SparkleGroup } from "@/components/sparkle";
 
+const ROLE_OPTIONS = {
+  text: [
+    { label: "Default", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Copywriter", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Novelist", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Academic Researcher", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "SEO Specialist", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Customer Support Agent", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Philosopher", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Educator", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+  ],
+  image: [
+    { label: "Default", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Concept Artist", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Graphic Designer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Photographer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Fantasy Illustrator", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "UI/UX Designer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Fashion Designer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Architect", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+  ],
+  code: [
+    { label: "Default", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Software Engineer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Data Scientist", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Frontend Developer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "DevOps Engineer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Security Analyst", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Technical Writer", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
+  ],
+};
+
+const STYLE_OPTIONS = {
+  text: [
+    { label: "Default", icon: <BookOpen className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Formal", icon: <BookOpen className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Conversational", icon: <Smile className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Persuasive", icon: <PenTool className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Informative", icon: <Text className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Humorous", icon: <Smile className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Narrative", icon: <Star className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Inspirational", icon: <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" /> },
+  ],
+  image: [
+    { label: "Default", icon: <Paintbrush className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Dreamy", icon: <Paintbrush className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Cinematic", icon: <Film className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Cyberpunk", icon: <Cpu className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Watercolor", icon: <Droplet className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Gritty", icon: <Layers className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Futuristic", icon: <Rocket className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Surreal", icon: <Cloud className="w-4 h-4 mr-2" aria-hidden="true" /> },
+  ],
+  code: [
+    { label: "Default", icon: <Code className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Concise", icon: <Code className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Beginner-Friendly", icon: <Smile className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Expert-Level", icon: <Brain className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Verbose with Comments", icon: <FileText className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Optimized", icon: <Zap className="w-4 h-4 mr-2" aria-hidden="true" /> },
+    { label: "Secure", icon: <Shield className="w-4 h-4 mr-2" aria-hidden="true" /> },
+  ],
+};
+
+const DEFAULT_OPTIONS = {
+  text: { role: "Default", style: "Default", length: 300, creativity: 0.6 },
+  image: { role: "Default", style: "Default", length: 300, creativity: 0.6 },
+  code: { role: "Default", style: "Default", length: 300, creativity: 0.6 },
+};
+
+function getRoleTooltip(label: string): string {
+  const tooltips: Record<string, string> = {
+    "Copywriter": "Crafts persuasive, engaging copy for marketing or branding.",
+    "Novelist": "Writes compelling stories and narratives.",
+    "Academic Researcher": "Conducts in-depth research and produces scholarly content.",
+    "SEO Specialist": "Optimizes content for search engines to improve visibility.",
+    "Customer Support Agent": "Provides helpful responses to customer inquiries.",
+    "Philosopher": "Explores abstract ideas and deep questions.",
+    "Educator": "Creates educational content for teaching and learning.",
+    "Concept Artist": "Designs creative visual concepts for projects.",
+    "Graphic Designer": "Creates visually appealing designs for branding or media.",
+    "Photographer": "Captures stunning images for various purposes.",
+    "Fantasy Illustrator": "Creates imaginative and fantastical illustrations.",
+    "UI/UX Designer": "Designs user-friendly and visually appealing interfaces.",
+    "Fashion Designer": "Creates stylish and innovative clothing designs.",
+    "Architect": "Designs functional and aesthetic building structures.",
+    "Software Engineer": "Develops efficient and scalable software solutions.",
+    "Data Scientist": "Analyzes data to extract insights and build models.",
+    "Frontend Developer": "Builds interactive and responsive user interfaces.",
+    "DevOps Engineer": "Manages infrastructure and deployment pipelines.",
+    "Security Analyst": "Ensures systems and data are secure from threats.",
+    "Technical Writer": "Produces clear and concise technical documentation.",
+  };
+
+  return tooltips[label] || "No description available.";
+}
+
+const CopyButton = ({ generatedPrompt }: { generatedPrompt: string }) => {
+  const [copied, setCopied] = useState(false);
+  const [emojis, setEmojis] = useState<string[]>([]);
+
+  const handleCopy = () => {
+    if (!generatedPrompt) return;
+
+    navigator.clipboard.writeText(generatedPrompt);
+    setCopied(true);
+
+    // Generate random emojis
+    const emojiPool = ["🐱", "😺", "😻", "🐾", "✨", "🧶", "😹", "🎀", "💫"];
+    const randomEmojis = Array.from({ length: 2 }, () =>
+      emojiPool[Math.floor(Math.random() * emojiPool.length)]
+    );
+    setEmojis(randomEmojis);
+
+    setTimeout(() => setCopied(false), 1200);
+  };
+
+  return (
+    <div className="relative inline-block">
+      {/* Copy Button */}
+      <button
+        onClick={handleCopy}
+        className="relative z-10 flex items-center gap-2 px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary hover:text-white transition-all overflow-hidden"
+      >
+        <Clipboard className="w-4 h-4" />
+        {copied ? "Copied!" : "Copy"}
+      </button>
+
+      {/* Emoji Burst Animation Layer */}
+      <AnimatePresence>
+        {copied &&
+          emojis.map((emoji, index) => (
+            <motion.span
+              key={index}
+              initial={{ opacity: 1, y: 0, scale: 1 }}
+              animate={{
+                opacity: 0,
+                y: -50 - Math.random() * 30,
+                x: (Math.random() - 0.5) * 60,
+                scale: 1.5,
+                rotate: Math.random() * 360,
+              }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              className="absolute text-2xl pointer-events-none"
+              style={{
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              {emoji}
+            </motion.span>
+          ))}
+      </AnimatePresence>
+    </div>
+  );
+};
 export default function PurrmptApp() {
-  const [promptType, setPromptType] = useState("image");
+  const [promptType, setPromptType] = useState<keyof typeof ROLE_OPTIONS>("text");
   const [idea, setIdea] = useState("");
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [maxTokens, setMaxTokens] = useState(300); // Default to "Medium"
-  const [temperature, setTemperature] = useState(0.8); // Default to "Creative"
-  const [showEmojis, setShowEmojis] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(DEFAULT_OPTIONS.text.role);
+  const [selectedStyle, setSelectedStyle] = useState(DEFAULT_OPTIONS.text.style);
+  const [length, setLength] = useState(DEFAULT_OPTIONS.text.length);
+  const [creativity, setCreativity] = useState(DEFAULT_OPTIONS.text.creativity);
 
   const { theme, setTheme } = useTheme();
 
@@ -27,55 +187,99 @@ export default function PurrmptApp() {
     if (!theme) setTheme("light"); // Default to light theme
   }, [theme, setTheme]);
 
+  useEffect(() => {
+    // Update default options when promptType changes
+    const defaults = DEFAULT_OPTIONS[promptType];
+    setSelectedRole(defaults.role);
+    setSelectedStyle(defaults.style);
+    setLength(defaults.length);
+    setCreativity(defaults.creativity);
+  }, [promptType]);
+
   const handleGeneratePrompt = async () => {
-    if (!idea.trim()) return;
+    if (!idea.trim() || !selectedRole || !selectedStyle) return;
 
     setIsGenerating(true);
-    setErrorMessage(""); // Clear previous errors
 
     try {
-      console.log("Selected promptType:", promptType); // Debugging
-      console.log("Max Tokens:", maxTokens); // Debugging
-      console.log("Temperature:", temperature); // Debugging
-
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: idea, promptType, maxTokens, temperature }),
+        body: JSON.stringify({
+          prompt: idea,
+          promptType,
+          role: selectedRole,
+          style: selectedStyle,
+          maxTokens: length,
+          temperature: creativity
+        })
       });
 
       const data = await response.json();
 
-      // Log the full API response to the console
-      console.log("API Response:", data);
-
       if (response.ok) {
         setGeneratedPrompt(data.result || "Error generating response");
       } else {
-        setErrorMessage(data.error || "An error occurred while generating the prompt.");
+        console.error(data.error || "An error occurred while generating the prompt.");
       }
     } catch (error) {
-      console.error("Error generating response:", error);
-      setErrorMessage("An unexpected error occurred. Please try again.");
+      console.error("Error:", error);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleCopyWithAnimation = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setShowEmojis(true); // Trigger the animation
-    setTimeout(() => {
-      setCopied(false);
-      setShowEmojis(false); // Reset the animation
-    }, 2000); // Match the animation duration
+  const handleSendToChatGPT = () => {
+    if (generatedPrompt) {
+      const encodedPrompt = encodeURIComponent(generatedPrompt);
+      const appUrl = `chat.openai://chat?prompt=${encodedPrompt}`;
+      const webUrl = `https://chat.openai.com/?prompt=${encodedPrompt}`;
+
+      // Check if the user is on a mobile device
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // Attempt to open the ChatGPT app on mobile
+        window.location.href = appUrl;
+
+        // Fallback to the web version after a short delay
+        setTimeout(() => {
+          window.open(webUrl, "_blank");
+        }, 1000);
+      } else {
+        // Open the web version on desktop
+        window.open(webUrl, "_blank");
+      }
+    }
   };
 
-  const copyTextToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleSendToGemini = () => {
+    if (generatedPrompt) {
+      const encodedPrompt = encodeURIComponent(generatedPrompt);
+      const bardUrl = `https://bard.google.com/?prompt=${encodedPrompt}`; // Google Bard's web URL with the prompt
+  
+      // Open Bard in a new tab
+      window.open(bardUrl, "_blank");
+    }
+  };
+
+  const handleSharePrompt = () => {
+    if (generatedPrompt) {
+      if (navigator.share) {
+        // Use the Web Share API
+        navigator
+          .share({
+            title: "Check out this prompt!",
+            text: generatedPrompt,
+            url: window.location.href, // Optional: Include the current page URL
+          })
+          .then(() => console.log("Prompt shared successfully!"))
+          .catch((error) => console.error("Error sharing prompt:", error));
+      } else {
+        // Fallback for browsers that don't support the Web Share API
+        alert("Sharing is not supported on this browser.");
+      }
+    }
   };
 
   return (
@@ -85,13 +289,13 @@ export default function PurrmptApp() {
         <header className="w-full py-4 px-6 flex items-center justify-between border-b shadow-sm">
           <div className="flex items-center gap-2">
             <Cat className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl md:text-3xl font-bold">Purrmpt</h1>
+            <h1 className="text-2xl md:text-3xl font-bold">Purrmpt 🐾</h1>
           </div>
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="rounded-full hover:bg-primary/10 button-hover-effect"
+            className="rounded-full hover:bg-primary/10"
           >
             {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             <span className="sr-only">Toggle theme</span>
@@ -99,7 +303,8 @@ export default function PurrmptApp() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 container mx-auto px-4 py-8 md:py-12 max-w-4xl">
+        <main className="flex-1 container mx-auto px-4 py-8 md:py-12 max-w-6xl">
+          
           <div className="text-center mb-8 relative">
             <div className="relative inline-block">
               <h2 className="text-xl md:text-2xl font-medium mb-2 relative z-10">
@@ -115,234 +320,259 @@ export default function PurrmptApp() {
             </p>
           </div>
 
-          <div className="space-y-8">
-            {/* Input Section */}
-            <div className="p-6 rounded-2xl border shadow-md bg-card">
-              <div className="space-y-6">
-                <div>
-                  <label htmlFor="prompt-type" className="block text-sm font-medium mb-2">
-                    Prompt Type
-                  </label>
-                  <Select
-                    value={promptType}
-                    onValueChange={(value) => {
-                      console.log("Selected Prompt Type:", value); // Debugging
-                      setPromptType(value);
-                    }}
-                    aria-label="Select the type of prompt"
-                  >
-                    <SelectTrigger id="prompt-type" className="rounded-xl focus:ring-primary">
-                      <SelectValue placeholder="Select prompt type" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="image">Image</SelectItem>
-                      <SelectItem value="text">Text</SelectItem>
-                      <SelectItem value="code">Code</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <label htmlFor="idea" className="block text-sm font-medium mb-2">
-                    Your Idea
-                  </label>
-                  <Textarea
-                    id="idea"
-                    placeholder="e.g. A cyberpunk cat exploring Tokyo"
-                    className="min-h-[150px] resize-none rounded-xl focus:ring-primary"
-                    value={idea}
-                    onChange={(e) => setIdea(e.target.value)}
-                  />
-                </div>
-
-                {/* Desired Length Slider */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label htmlFor="desired-length" className="block text-sm font-medium">
-                      Desired Length
-                    </label>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <span className="text-muted-foreground cursor-pointer">?</span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Controls the length of the output: Short or Extra Long.</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="relative">
-                    <Slider
-                      id="desired-length"
-                      value={[maxTokens]} // Wrap in an array
-                      onValueChange={(value) => setMaxTokens(value[0])} // Extract the first value
-                      min={100}
-                      max={900}
-                      step={200}
-                      className="rounded-xl"
-                    />
-                    {/* Custom Marks */}
-                    <div className="flex justify-between text-xs mt-2">
-                      <span>Short</span>
-                      <span>Long</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Temperature Slider */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label htmlFor="temperature" className="block text-sm font-medium">
-                      Creativity Slider
-                    </label>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <span className="text-muted-foreground cursor-pointer">?</span>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Controls the randomness of the output: Lower values are more focused, higher values are more creative.</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  <div className="relative">
-                    <Slider
-                      id="temperature"
-                      value={[temperature]} // Wrap in an array
-                      onValueChange={(value) => setTemperature(value[0])} // Extract the first value
-                      min={0.2}
-                      max={1.0}
-                      step={0.2}
-                      className="rounded-xl"
-                    />
-                    {/* Custom Marks */}
-                    <div className="flex justify-between text-xs mt-2">
-                      <span>Low</span>
-                      <span>High</span>
-                    </div>
-                  </div>
-                </div>
-
-                <Button
-                  className="w-full font-medium py-6 text-base transition-all rounded-xl button-hover-effect bg-primary text-primary-foreground flex items-center justify-center gap-2"
-                  onClick={handleGeneratePrompt}
-                  disabled={!idea.trim() || isGenerating}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column */}
+            <div className="space-y-6">
+              {/* Prompt Type */}
+              <div className="p-6 rounded-2xl border shadow-md bg-card">
+                <label htmlFor="prompt-type" className="block text-sm font-medium mb-2 flex items-center">
+                  <SlidersHorizontal className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                  Prompt Type
+                </label>
+                <Select
+                  value={promptType}
+                  onValueChange={(value) => setPromptType(value as keyof typeof ROLE_OPTIONS)}
                 >
-                  {isGenerating ? (
-                    <span className="flex items-center gap-2">
-                      <svg
-                        className="animate-spin -ml-1 mr-2 h-5 w-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      Generating...
-                    </span>
-                  ) : (
-                    <>
-                      <span role="img" aria-label="paw">🐾</span> {/* Single cute paw icon */}
-                      Generate Prompt
-                    </>
-                  )}
-                </Button>
-                {errorMessage && <p className="text-sm text-red-500 mt-2">{errorMessage}</p>}
+                  <SelectTrigger id="prompt-type" className="rounded-xl focus:ring-primary">
+                    <SelectValue placeholder="Select prompt type" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="text">Text</SelectItem>
+                    <SelectItem value="image">Image</SelectItem>
+                    <SelectItem value="code">Code</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
+
+              {/* Idea Input */}
+              <div className="p-6 rounded-2xl border shadow-md bg-card">
+                <label htmlFor="idea" className="block text-sm font-medium mb-2 flex items-center">
+                  <Sparkles className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                  Your Prompt
+                </label>
+                <Textarea
+                  id="idea"
+                  placeholder="e.g., A cyberpunk cat exploring Tokyo"
+                  className="min-h-[150px] resize-none rounded-xl focus:ring-primary"
+                  value={idea}
+                  onChange={(e) => setIdea(e.target.value)}
+                />
+              </div>
+
+              {/* Advanced Prompt Options */}
+              <div className="p-6 rounded-2xl border shadow-md bg-card">
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-between"
+                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                >
+                  <span className="flex items-center">
+                    <Settings className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                    Show Advanced Prompt Options (Optional)
+                  </span>
+                  <Settings className="h-5 w-5" />
+                </Button>
+                {isSettingsOpen && (
+                  <div className="mt-4 space-y-6">
+                    {/* Role Dropdown */}
+                    <div>
+                      <label htmlFor="role" className="block text-sm font-medium mb-2 flex items-center">
+                        <User className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                        Role
+                      </label>
+                      <Select
+                        value={selectedRole}
+                        onValueChange={(value) => setSelectedRole(value)}
+                      >
+                        <SelectTrigger id="role" className="rounded-xl focus:ring-primary">
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl overflow-visible z-40">
+                          {ROLE_OPTIONS[promptType]?.map(({ label, icon }) => (
+                            <SelectItem key={label} value={label}>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <span className="flex items-center">
+                                    {icon}
+                                    {label}
+                                  </span>
+                                </TooltipTrigger>
+                                <TooltipContent
+                                  className="z-50"
+                                  side="right"
+                                  align="start"
+                                  sideOffset={8}
+                                >
+                                  {getRoleTooltip(label)}
+                                </TooltipContent>
+                              </Tooltip>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Style Dropdown */}
+                    <div>
+                      <label htmlFor="style" className="block text-sm font-medium mb-2 flex items-center">
+                        <Palette className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                        Style
+                      </label>
+                      <Select
+                        value={selectedStyle}
+                        onValueChange={(value) => setSelectedStyle(value)}
+                      >
+                        <SelectTrigger id="style" className="rounded-xl focus:ring-primary">
+                          <SelectValue placeholder="Select style" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-xl">
+                          {STYLE_OPTIONS[promptType]?.map(({ label, icon }) => (
+                            <SelectItem key={label} value={label}>
+                              <span className="flex items-center">
+                                {icon}
+                                {label}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Length Slider */}
+                    <div>
+                      <label htmlFor="length" className="block text-sm font-medium mb-2 flex items-center">
+                        <Text className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                        Max Length
+                      </label>
+                      <Slider
+                        id="length"
+                        value={[length]}
+                        onValueChange={(value) => setLength(value[0])}
+                        min={100}
+                        max={900}
+                        step={200}
+                        className="rounded-xl"
+                      />
+                      <div className="flex justify-between text-xs mt-2">
+                        <span>Short</span>
+                        <span>Long</span>
+                      </div>
+                    </div>
+
+                    {/* Creativity Slider */}
+                    <div>
+                      <label htmlFor="creativity" className="block text-sm font-medium mb-2 flex items-center">
+                        <Brain className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                        Creativity
+                      </label>
+                      <Slider
+                        id="creativity"
+                        value={[creativity]}
+                        onValueChange={(value) => setCreativity(value[0])}
+                        min={0.2}
+                        max={1.0}
+                        step={0.2}
+                        className="rounded-xl"
+                      />
+                      <div className="flex justify-between text-xs mt-2">
+                        <span>Focused</span>
+                        <span>Creative</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Generate Button */}
+              <Button
+                className="w-full font-medium py-6 text-base transition-all rounded-xl bg-primary text-white hover:bg-primary/90 hover:text-white flex items-center justify-center gap-2"
+                onClick={handleGeneratePrompt}
+                disabled={!idea.trim() || isGenerating}
+              >
+                {isGenerating ? "Generating..." : "Generate Prompt"}
+              </Button>
             </div>
 
-            {/* Output Section */}
-            {generatedPrompt ? (
-              <div className="p-6 rounded-2xl border shadow-md bg-card">
-                <div className="flex items-center gap-2 mb-4">
-                  <h3 className="text-lg font-medium">Enhanced Prompt</h3>
-                  <Sparkles className="h-4 w-4 text-secondary" />
+            {/* Right Column */}
+            <div className="space-y-6 lg:sticky lg:top-8">
+              {/* Enhanced Output */}
+              {generatedPrompt ? (
+                <div className="p-6 rounded-2xl border shadow-md bg-card">
+                  <h3 className="text-lg font-medium mb-4 flex items-center">
+                    <Wand2 className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                    Enhanced Prompt
+                  </h3>
+                  <div className="rounded-xl p-5 bg-muted whitespace-pre-wrap">{generatedPrompt}</div>
                 </div>
-                <div className="rounded-xl p-5 mb-4 bg-muted whitespace-pre-wrap">
-                  {generatedPrompt}
+              ) : (
+                <div className="p-6 rounded-2xl border shadow-md bg-card">
+                  <p className="text-muted-foreground">Your enhanced prompt will appear here.</p>
                 </div>
-                <div className="flex flex-col gap-4">
-                  {/* Copy to Clipboard Button with Animation */}
-                  <div className="relative">
-                    {/* Rising Emojis */}
-                    {showEmojis && (
-                      <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
-                        <div className="emoji-animation">
-                          <span>😺</span>
-                          <span>🐾</span>
-                          <span>✨</span>
-                        </div>
-                      </div>
-                    )}
+              )}
 
-                    {/* Copy to Clipboard Button */}
-                    <Button
-                      className={`w-full py-5 transition-all duration-300 text-base rounded-xl button-hover-effect flex items-center justify-center gap-2 ${
-                        copied
-                          ? "bg-secondary text-secondary-foreground font-medium"
-                          : "bg-primary/10 hover:bg-primary/20 text-foreground font-medium border"
-                      }`}
-                      onClick={() => handleCopyWithAnimation(generatedPrompt)}
-                      disabled={copied}
-                    >
-                      {copied ? (
-                        <>
-                          <span role="img" aria-label="check">✅</span> {/* Checkmark icon */}
-                          Copied!
-                        </>
-                      ) : (
-                        <>
-                          <span role="img" aria-label="clipboard">📋</span> {/* Clipboard icon */}
-                          Copy to Clipboard
-                        </>
-                      )}
-                    </Button>
-                  </div>
-
-                  {/* Send to ChatGPT Button */}
+              {/* Copy and Send Buttons */}
+              {generatedPrompt && (
+                <div className="flex gap-4">
+                  <CopyButton generatedPrompt={generatedPrompt} />
                   <Button
-                    className="w-full py-5 transition-all duration-300 text-base rounded-xl button-hover-effect flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary/20 text-foreground font-medium border"
-                    onClick={() => {
-                      const chatGPTUrl = `https://chat.openai.com/?prompt=${encodeURIComponent(generatedPrompt)}`;
-                      window.open(chatGPTUrl, "_blank"); // Open ChatGPT in a new tab
-                    }}
-                    disabled={!generatedPrompt.trim()} // Disable if no prompt is generated
+                    variant="outline"
+                    className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
+                    onClick={handleSendToChatGPT}
                   >
-                    <span role="img" aria-label="chat">💬</span> {/* Chat icon */}
+                    <Send className="w-4 h-4" />
                     Send to ChatGPT
                   </Button>
+
+                  
+                  {/* Send to Gemini Button */}
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
+                    onClick={handleSendToGemini}
+                  >
+                    <Send className="w-4 h-4" />
+                    Send to Gemini
+                  </Button>
+
+                  {/* Share Button */}
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition-all"
+                    onClick={handleSharePrompt}
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share
+                  </Button>
                 </div>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Your enhanced prompt will appear here.</p>
-            )}
+              )}
+            </div>
           </div>
         </main>
 
         {/* Footer */}
         <footer className="w-full py-6 px-4 border-t text-center shadow-inner">
-          <p className="text-sm text-muted-foreground">
-            Created by{" "}
-            <a
-              href="https://kevinolanday.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-secondary hover:underline transition-all"
-            >
-              Kevin Olanday
-            </a>
-          </p>
-        </footer>
+  <p className="text-sm text-muted-foreground">
+    Designed and developed by{" "}
+    <a
+      href="https://kevinolanday.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-secondary hover:underline transition-all"
+    >
+      Kevin Olanday
+    </a>
+    . View the project on{" "}
+    <a
+      href="https://github.com/kevin-olanday/purrmpt"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-secondary hover:underline transition-all"
+    >
+      GitHub
+    </a>
+    .
+  </p>
+</footer>
       </div>
     </TooltipProvider>
   );

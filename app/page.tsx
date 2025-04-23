@@ -1,5 +1,13 @@
-import PurrmptApp from "@/components/purrmpt-app"
+import Head from "next/head";
+import PurrmptApp from "@/components/purrmpt-app";
 
 export default function Home() {
-  return <PurrmptApp />
+  return (
+    <>
+      <Head>
+        <title>Purrmpt</title>
+      </Head>
+      <PurrmptApp />
+    </>
+  );
 }

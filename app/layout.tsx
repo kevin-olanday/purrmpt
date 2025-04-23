@@ -10,6 +10,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <title>Purrmpt</title>
+        <meta name="description" content="Turn your ideas into purrfect prompts with AI." />
+
         {/* Favicon */}
         <link rel="icon" href="/favicon/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
