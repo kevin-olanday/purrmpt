@@ -11,6 +11,7 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/comp
 import { Slider } from "@/components/ui/slider";
 import { SparkleGroup } from "@/components/sparkle";
 
+
 const ROLE_OPTIONS = {
   text: [
     { label: "Default", icon: <User className="w-4 h-4 mr-2" aria-hidden="true" /> },
@@ -545,30 +546,32 @@ export default function PurrmptApp() {
           </div>
         </main>
 
+
+
         {/* Footer */}
         <footer className="w-full py-6 px-4 border-t text-center shadow-inner">
-  <p className="text-sm text-muted-foreground">
-    Designed and developed by{" "}
-    <a
-      href="https://kevinolanday.com"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-secondary hover:underline transition-all"
-    >
-      Kevin Olanday
-    </a>
-    . View the project on{" "}
-    <a
-      href="https://github.com/kevin-olanday/purrmpt"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="text-secondary hover:underline transition-all"
-    >
-      GitHub
-    </a>
-    .
-  </p>
-</footer>
+          <p className="text-sm text-muted-foreground">
+            Designed and developed by{" "}
+            <a
+              href="https://kevinolanday.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-secondary hover:underline transition-all"
+            >
+              Kevin Olanday
+            </a>
+            . View the project on{" "}
+            <a
+              href="https://github.com/kevin-olanday/purrmpt"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-secondary hover:underline transition-all"
+            >
+              GitHub
+            </a>
+            .
+          </p>
+        </footer>
       </div>
     </TooltipProvider>
   );

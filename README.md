@@ -3,9 +3,9 @@
 A sleek, minimal AI-powered prompt enhancer that helps you turn simple ideas into purrfectly crafted prompts for ChatGPT, DALL·E, Midjourney, and more.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Build](https://img.shields.io/github/actions/workflow/status/username/repo/build.yml)]()
-[![Version](https://img.shields.io/github/v/release/username/repo)]()
-[![Issues](https://img.shields.io/github/issues/username/repo)]()
+[![Build](https://img.shields.io/github/actions/workflow/status/kevin-olanday/purrmpt/build.yml)](https://github.com/kevin-olanday/purrmpt/actions)
+[![Version](https://img.shields.io/github/v/release/kevin-olanday/purrmpt)](https://github.com/kevin-olanday/purrmpt/releases)
+[![Issues](https://img.shields.io/github/issues/kevin-olanday/purrmpt)](https://github.com/kevin-olanday/purrmpt/issues)
 
 ---
 
@@ -27,7 +27,7 @@ A sleek, minimal AI-powered prompt enhancer that helps you turn simple ideas int
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/purrmpt.git
+git clone https://github.com/kevinolanday/purrmpt.git
 cd purrmpt
 npm install
 ```
