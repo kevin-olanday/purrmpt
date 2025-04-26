@@ -21,6 +21,8 @@ const config = {
     extend: {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
+        clash: ['"Clash Grotesk"', "sans-serif"],
+        whyte: ['"Whyte Inktrap"', "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

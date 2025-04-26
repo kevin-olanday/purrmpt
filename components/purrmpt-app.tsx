@@ -10,6 +10,7 @@ import { useTheme } from "next-themes";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
 import { SparkleGroup } from "@/components/sparkle";
+import Image from "next/image";
 
 
 const ROLE_OPTIONS = {
@@ -120,7 +121,7 @@ const CopyButton = ({ generatedPrompt }: { generatedPrompt: string }) => {
     setCopied(true);
 
     // Generate random emojis
-    const emojiPool = ["🐱", "😺", "😻", "🐾", "✨", "🧶", "😹", "🎀", "💫"];
+    const emojiPool = ["🐱", "😺", "😻", "🐾", "✨",  "😹", "💫"];
     const randomEmojis = Array.from({ length: 2 }, () =>
       emojiPool[Math.floor(Math.random() * emojiPool.length)]
     );
@@ -289,8 +290,11 @@ export default function PurrmptApp() {
         {/* Header */}
         <header className="w-full py-4 px-6 flex items-center justify-between border-b shadow-sm">
           <div className="flex items-center gap-2">
-            <Cat className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl md:text-3xl font-bold">Purrmpt 🐾</h1>
+            {/* Logo with dynamic color */}
+            <div className="logo-wrapper">
+              <div className="logo-masked" aria-label="Purrmpt Logo" role="img" />
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold font-whyte">Purrmpt</h1>
           </div>
           <Button
             variant="ghost"

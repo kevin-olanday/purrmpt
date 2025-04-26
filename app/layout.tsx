@@ -14,9 +14,20 @@ export default function RootLayout({
         <meta name="description" content="Turn your ideas into purrfect prompts with AI." />
 
         {/* Favicon */}
-        <link rel="icon" href="/favicon/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png" />
+        <link rel="icon" href="/favicon/favicon.ico" type="image/png" />
+        <link
+          rel="icon"
+          href="/favicon/favicon.ico"
+          type="image/png"
+          media="(prefers-color-scheme: light)"
+        />
+        <link
+          rel="icon"
+          href="/favicon/favicon.ico"
+          type="image/png"
+          media="(prefers-color-scheme: dark)"
+        />
+        <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
         <meta name="theme-color" content="#ffffff" />
       </head>

@@ -1,6 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Clash+Grotesk:wght@400;500;700&display=swap');
+
+@font-face {
+  font-family: 'Whyte Inktrap';
+  src: url('/fonts/WhyteInktrap-Regular.woff2') format('woff2'),
+       url('/fonts/WhyteInktrap-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Whyte Inktrap';
+  src: url('/fonts/WhyteInktrap-Bold.woff2') format('woff2'),
+       url('/fonts/WhyteInktrap-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @layer base {
   :root {
@@ -162,4 +180,24 @@
     opacity: 0;
     transform: translateY(-50px);
   }
+}
+
+/* Masked logo styles for PNG logo */
+.logo-masked {
+  width: 2rem; /* w-10 */
+  height: 2rem; /* h-10 */
+  background-color: #c28af9; /* light theme */
+  display: inline-block;
+  mask-image: url('/logo.png');
+  -webkit-mask-image: url('/logo.png');
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+}
+
+.dark .logo-masked {
+  background-color: #70e6b7; /* green for dark mode */
 }
