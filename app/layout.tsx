@@ -61,8 +61,8 @@ export default function RootLayout({
         <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#c28af9" />
       </head>
       <body className="flex flex-col min-h-screen">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
-          {/* 4. Wrap theme-dependent components in ClientOnly */}
+        {/* Set disableTransitionOnChange to true for instant theme change */}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={true}>
           <ClientOnly>
             <div className="bg-brand-gradient" aria-hidden="true"></div>
             <div className="dark-bg-overlay hidden dark:block" aria-hidden="true"></div>

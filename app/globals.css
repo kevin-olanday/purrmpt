@@ -65,10 +65,6 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 156 70% 67%;
   }
-
-  html, body {
-    transition: background-color 0.4s cubic-bezier(0.4,0,0.2,1), color 0.4s cubic-bezier(0.4,0,0.2,1);
-  }
 }
 
 @layer base {
@@ -77,6 +73,12 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+  html, body {
+    /* transition: background-color 0.4s cubic-bezier(0.4,0,0.2,1), color 0.4s cubic-bezier(0.4,0,0.2,1); */
   }
 }
 
