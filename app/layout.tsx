@@ -30,24 +30,25 @@ export default function RootLayout({
         <link rel="icon" href="/favicon/favicon.ico" type="image/png" media="(prefers-color-scheme: light)" />
         <link rel="icon" href="/favicon/favicon.ico" type="image/png" media="(prefers-color-scheme: dark)" />
         <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
-        <link rel="manifest" href="/favicon/site.webmanifest" />
-        <meta name="theme-color" content="#ffffff" />
-
-
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#c28af9" />
         {/* Open Graph */}
         <meta property="og:title" content="Purrmpt" />
         <meta property="og:description" content="Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱" />
         <meta property="og:image" content="/purrmpt-og.png" />
         <meta property="og:url" content="https://purrmpt.com" />
         <meta property="og:type" content="website" />
-
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Purrmpt" />
         <meta name="twitter:description" content="Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱" />
         <meta name="twitter:image" content="/purrmpt-og.png" />
-
-        
+        {/* PWA iOS support */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Purrmpt" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
+        <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#c28af9" />
       </head>
       <body className="flex flex-col min-h-screen">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
