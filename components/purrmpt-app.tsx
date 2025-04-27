@@ -11,6 +11,7 @@ import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/comp
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Sparkle } from "@/components/sparkle";
+import React from "react";
 
 const SPARKLE_COLORS = ["#A78BFA", "#6EE7B7", "#FBBF24", "#c28af9", "#70e6b7"];
 
@@ -318,7 +319,6 @@ export default function PurrmptApp() {
     }
   };
 
-
   const handleSharePrompt = () => {
     if (generatedPrompt) {
       if (navigator.share) {
@@ -403,7 +403,6 @@ export default function PurrmptApp() {
     // Fallback
     return "e.g., Describe your idea here";
   }
-  
 
   return (
     <TooltipProvider>
@@ -420,11 +419,11 @@ export default function PurrmptApp() {
           {/* Main hero content */}
           <div className="relative z-10 text-center ">
             <h2 className="text-2xl md:text-3xl font-semibold mb-2 flex items-center justify-center gap-2">
-              Turn your ideas into purrfect prompts
+              Supercharge your prompts
               <Sparkles className="h-5 w-5 text-secondary relative animate-bounce" />
             </h2>
             <p className="text-sm md:text-base text-muted-foreground mt-2">
-              Enter your idea below and we'll enhance it into a detailed, effective prompt
+            Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱
             </p>
           </div>
         </div>
@@ -631,8 +630,8 @@ export default function PurrmptApp() {
             >
               {isGenerating ? (
                 <div className="p-6 rounded-2xl border shadow-md bg-card flex items-center justify-center min-h-[120px]">
-                  <Loader2 className="animate-spin w-8 h-8 text-muted-foreground" />
-                  <span className="ml-3 text-muted-foreground">Enhancing your prompt...</span>
+                  {/* Shimmer effect */}
+                  <div className="skeleton w-full h-[88px]" aria-label="Loading enhanced prompt" />
                 </div>
               ) : generatedPrompt ? (
                 <div className="p-6 rounded-2xl border shadow-md bg-card">
@@ -656,7 +655,7 @@ export default function PurrmptApp() {
                 <CopyButton generatedPrompt={generatedPrompt} />
 
                 {/* Send to ChatGPT Button */}
-                <Button                
+                <Button
                   variant="outline"
                   className="inline-flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
                   onClick={handleSendToChatGPT}

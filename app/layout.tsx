@@ -19,7 +19,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>Purrmpt</title>
-        <meta name="description" content="Turn your ideas into purrfect prompts with AI." />
+        <meta name="description" content="Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱" />
+        <meta name="keywords" content="Purrmpt, AI prompts, prompt enhancer, prompt builder, AI writing, text generation, creative prompts, ChatGPT prompts, prompt crafting, AI tools, prompt generator, writing assistant, DALL-E prompts, Codex prompts, prompt optimization, free AI tool" />
+        {/* Basic SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="author" content="Kevin Olanday" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Favicon */}
         <link rel="icon" href="/favicon/favicon.ico" type="image/png" />
         <link rel="icon" href="/favicon/favicon.ico" type="image/png" media="(prefers-color-scheme: light)" />
@@ -27,6 +32,22 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
         <link rel="manifest" href="/favicon/site.webmanifest" />
         <meta name="theme-color" content="#ffffff" />
+
+
+        {/* Open Graph */}
+        <meta property="og:title" content="Purrmpt" />
+        <meta property="og:description" content="Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱" />
+        <meta property="og:image" content="/purrmpt-og.png" />
+        <meta property="og:url" content="https://purrmpt.com" />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Purrmpt" />
+        <meta name="twitter:description" content="Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱" />
+        <meta name="twitter:image" content="/purrmpt-og.png" />
+
+        
       </head>
       <body className="flex flex-col min-h-screen">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
