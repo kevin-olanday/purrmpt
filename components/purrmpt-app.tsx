@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, Text, Brain, Wand2, User, Palette, Clipboard, Send, Share2, Sparkles, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "next-themes";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
 import { Sparkle } from "@/components/sparkle";
 import React from "react";
 
@@ -176,6 +175,79 @@ function getRoleTooltip(label: string): string {
   return tooltips[label] || "No description available.";
 }
 
+const CAT_PLACEHOLDERS = [
+  "e.g., Describe a cat's secret mission to explore Mars.",
+  "e.g., Write a bedtime story about a cat who dreams of flying.",
+  "e.g., Create a poem from the perspective of a mischievous house cat.",
+  "e.g., Imagine an interview with a famous cat influencer — write the first three questions.",
+  "e.g., Invent a new cat breed and describe its personality and special traits.",
+  "e.g., Draft a movie pitch where a team of cats saves the world from a robot uprising.",
+  "e.g., Translate common cat behaviors into human language.",
+  "e.g., Summarize the plot of 'The Great Catsby' in a few sentences.",
+  "e.g., Write a Yelp review from a cat about their favorite sunny windowsill.",
+  "e.g., Explain why cats might secretly be the rulers of the world, using logical arguments.",
+];
+
+export function useRandomPlaceholder({
+  promptType,
+  selectedRole,
+  inputValue,
+}: {
+  promptType: string;
+  selectedRole: string;
+  inputValue: string;
+}) {
+  const [placeholder, setPlaceholder] = useState(() => {
+    const idx = Math.floor(Math.random() * CAT_PLACEHOLDERS.length);
+    return CAT_PLACEHOLDERS[idx];
+  });
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    // Only cycle if promptType is "text", selectedRole is "Default", and input is empty
+    const shouldCycle =
+      promptType === "text" && selectedRole === "Default" && !inputValue;
+
+    if (shouldCycle) {
+      intervalRef.current = setInterval(() => {
+        setPlaceholder((prev) => {
+          let idx = CAT_PLACEHOLDERS.indexOf(prev);
+          let nextIdx =
+            (idx + 1 + Math.floor(Math.random() * (CAT_PLACEHOLDERS.length - 1))) %
+            CAT_PLACEHOLDERS.length;
+          if (nextIdx === idx) nextIdx = (idx + 1) % CAT_PLACEHOLDERS.length;
+          return CAT_PLACEHOLDERS[nextIdx];
+        });
+      }, 5000);
+    } else {
+      // Reset to a static random placeholder if not cycling
+      setPlaceholder((prev) => {
+        // If switching away from text/Default, keep the last placeholder
+        if (promptType !== "text" || selectedRole !== "Default") {
+          return prev;
+        }
+        // If input is not empty, keep the last placeholder
+        if (inputValue) {
+          return prev;
+        }
+        // Otherwise, pick a new random one
+        const idx = Math.floor(Math.random() * CAT_PLACEHOLDERS.length);
+        return CAT_PLACEHOLDERS[idx];
+      });
+    }
+
+    // Cleanup interval
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [promptType, selectedRole, inputValue]);
+
+  return placeholder;
+}
+
 const CopyButton = ({ generatedPrompt }: { generatedPrompt: string }) => {
   const [copied, setCopied] = useState(false);
   const [emojis, setEmojis] = useState<string[]>([]);
@@ -261,6 +333,17 @@ export default function PurrmptApp() {
     setLength(defaults.length);
     setCreativity(defaults.creativity);
   }, [promptType]);
+
+  const catPlaceholder = useRandomPlaceholder({
+    promptType,
+    selectedRole,
+    inputValue: idea,
+  });
+
+  const dynamicPlaceholder =
+    promptType === "text" && selectedRole === "Default"
+      ? catPlaceholder
+      : getIdeaPlaceholder(promptType, selectedRole);
 
   const handleGeneratePrompt = async () => {
     if (!idea.trim() || !selectedRole || !selectedStyle) return;
@@ -357,7 +440,7 @@ export default function PurrmptApp() {
         case "Educator":
           return "e.g., Explain photosynthesis to 8th grade students";
         default:
-          return "e.g., A cyberpunk cat exploring Tokyo";
+          return "e.g., Explain why cats might secretly be the rulers of the world, using logical arguments.";
       }
     }
     // Image
@@ -378,8 +461,7 @@ export default function PurrmptApp() {
         case "Architect":
           return "e.g., Modern eco-friendly cabin in the woods";
         default:
-          return "e.g., A cyberpunk cat exploring Tokyo, neon lights, rainy night";
-      }
+          return `e.g., Cybernetic cat walking the streets of Tokyo during a storm`;      }
     }
     // Code
     if (promptType === "code") {
@@ -453,18 +535,39 @@ export default function PurrmptApp() {
             </div>
 
             {/* Idea Input */}
-            <div className="p-6 rounded-2xl border shadow-md bg-card">
+            <div className="p-6 rounded-2xl border shadow-md bg-card relative">
               <label htmlFor="idea" className="block text-sm font-medium mb-2 flex items-center">
                 <Sparkles className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
                 Your Prompt
               </label>
-              <Textarea
-                id="idea"
-                placeholder={getIdeaPlaceholder(promptType, selectedRole)}
-                className="min-h-[150px] resize-none rounded-xl focus:ring-primary"
-                value={idea}
-                onChange={(e) => setIdea(e.target.value)}
-              />
+              <div className="relative">
+                <Textarea
+                  id="idea"
+                  className="min-h-[150px] resize-none rounded-xl focus:ring-primary"
+                  value={idea}
+                  onChange={(e) => setIdea(e.target.value)}
+                />
+                <AnimatePresence mode="wait" initial={false}>
+                  {idea === "" && (
+                    <motion.div
+                      key={dynamicPlaceholder}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      className="absolute top-4 left-4 right-4 text-muted-foreground pointer-events-none select-none text-base"
+                      style={{
+                        fontFamily: "inherit",
+                        fontSize: "inherit",
+                        lineHeight: "inherit",
+                        whiteSpace: "pre-line",
+                      }}
+                    >
+                      {dynamicPlaceholder}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Advanced Prompt Options */}
