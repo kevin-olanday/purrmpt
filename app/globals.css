@@ -65,6 +65,10 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 156 70% 67%;
   }
+
+  html, body {
+    transition: background-color 0.4s cubic-bezier(0.4,0,0.2,1), color 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
 }
 
 @layer base {
@@ -204,12 +208,46 @@
 
 .bg-brand-gradient {
   @apply min-h-screen;
-  background: linear-gradient(135deg, #c28af9 0%, #70e6b7 100%);
+  background: linear-gradient(135deg, #c28af9 0%, #70e6b7 100%, #fbbf24 100%);
+  background-size: 200% 200%;
+  background-position: 0% 50%;
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   z-index: -1;
+  animation: gradient-breathe 12s ease-in-out infinite alternate;
+}
+
+.dark .bg-brand-gradient {
+  background: linear-gradient(135deg, #312e81 0%, #0f766e 60%, #232946 100%);
+  background-size: 200% 200%;
+  background-position: 100% 50%;
+  animation: gradient-breathe-dark 12s ease-in-out infinite alternate;
+}
+
+@keyframes gradient-breathe {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradient-breathe-dark {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
 }
 
 .bg-noise-overlay {

@@ -6,7 +6,9 @@ import { ThemeProvider } from "next-themes";
 import { Badge } from "@/components/ui/badge";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 export default function RootLayout({
   children,
@@ -14,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <title>Purrmpt</title>
         <meta name="description" content="Turn your ideas into purrfect prompts with AI." />
@@ -27,13 +29,13 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className="flex flex-col min-h-screen">
-        <div className="bg-brand-gradient" aria-hidden="true"></div>
-        <div className="dark-bg-overlay hidden dark:block" aria-hidden="true"></div>
-        <div className="bg-noise-overlay" aria-hidden="true"></div>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
+          <div className="bg-brand-gradient" aria-hidden="true"></div>
+          <div className="dark-bg-overlay hidden dark:block" aria-hidden="true"></div>
+          <div className="bg-noise-overlay" aria-hidden="true"></div>
           <Header />
           {/* Main Content */}
-          <main className="flex-1 container mx-auto px-4 py-6 md:py-12 max-w-7xl xl:max-w-8xl w-full flex flex-col">
+          <main role="main" className="flex-1 container mx-auto px-4 py-6 md:py-12 max-w-7xl xl:max-w-8xl w-full flex flex-col">
             <motion.div
               initial={{ opacity: 0, y: 32 }}
               animate={{ opacity: 1, y: 0 }}
@@ -54,14 +56,19 @@ export default function RootLayout({
             </motion.div>
           </main>
           {/* Footer */}
-          <footer className="w-full py-6 px-4 border-t text-center shadow-inner bg-white/80 dark:bg-[#1f2937]/80 backdrop-blur-md">
-            <p className="text-sm text-muted-foreground">
+          <footer role="contentinfo" className="w-full py-6 px-4 border-t text-center shadow-inner bg-white/80 dark:bg-[#1f2937]/80 backdrop-blur-md">
+            <p className="text-sm text-gray-600 dark:text-muted-foreground">
               Designed and developed with ❤️ by{" "}
               <a
                 href="https://kevinolanday.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-secondary hover:underline transition-all"
+                className="
+                  inline-block align-middle font-semibold px-3 py-1 ml-1 rounded-full text-xs
+                  bg-gray-200 text-gray-900 hover:bg-gray-300
+                  dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600
+                  transition-colors
+                "
               >
                 Kevin Olanday
               </a>
@@ -70,7 +77,12 @@ export default function RootLayout({
                 href="https://github.com/kevin-olanday/purrmpt"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-secondary hover:underline transition-all"
+                className="
+                  inline-block align-middle font-semibold px-3 py-1 ml-1 rounded-full text-xs
+                  bg-gray-200 text-gray-900 hover:bg-gray-300
+                  dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600
+                  transition-colors
+                "
               >
                 GitHub
               </a>
@@ -86,9 +98,15 @@ export default function RootLayout({
 // Header with theme toggle and matching style
 function Header() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header
+      role="banner"
       className="
         w-full
         py-4
@@ -115,14 +133,60 @@ function Header() {
           v1.0.0
         </Badge>
       </div>
-      {/* Theme toggle button */}
-      <button
-        aria-label="Toggle theme"
-        className="rounded-full p-2 hover:bg-muted transition-colors"
-        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      >
-        {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-      </button>
+      {/* Animated Theme toggle button with Tooltip */}
+      {mounted && (
+        <TooltipProvider>
+          <Tooltip delayDuration={200}>
+            <TooltipTrigger asChild>
+              <button
+                aria-label="Toggle theme"
+                className="rounded-full p-2 hover:bg-muted transition-colors"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {theme === "dark" ? (
+                    <motion.span
+                      key="sun"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="block"
+                    >
+                      <Sun className="w-5 h-5" />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="moon"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="block"
+                    >
+                      <Moon className="w-5 h-5" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              align="center"
+              className="bg-gray-900 text-gray-100 border border-gray-800 rounded-md px-3 py-1.5 text-xs shadow-lg"
+              sideOffset={6}
+              arrowPadding={8}
+            >
+              Toggle Theme
+              <div className="absolute left-1/2 -translate-x-1/2 -top-2">
+                <svg width="12" height="6" viewBox="0 0 12 6" className="text-gray-900 dark:text-gray-900">
+                  <polygon points="6,0 12,6 0,6" fill="currentColor" />
+                </svg>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </header>
   );
 }
