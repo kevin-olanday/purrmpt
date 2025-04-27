@@ -10,6 +10,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
+// 1. ClientOnly component
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  if (!mounted) return null;
+  return <>{children}</>;
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -52,10 +62,13 @@ export default function RootLayout({
       </head>
       <body className="flex flex-col min-h-screen">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
-          <div className="bg-brand-gradient" aria-hidden="true"></div>
-          <div className="dark-bg-overlay hidden dark:block" aria-hidden="true"></div>
-          <div className="bg-noise-overlay" aria-hidden="true"></div>
-          <Header />
+          {/* 4. Wrap theme-dependent components in ClientOnly */}
+          <ClientOnly>
+            <div className="bg-brand-gradient" aria-hidden="true"></div>
+            <div className="dark-bg-overlay hidden dark:block" aria-hidden="true"></div>
+            <div className="bg-noise-overlay" aria-hidden="true"></div>
+            <Header />
+          </ClientOnly>
           {/* Main Content */}
           <main role="main" className="flex-1 container mx-auto px-4 py-6 md:py-12 max-w-7xl xl:max-w-8xl w-full flex flex-col">
             <motion.div
