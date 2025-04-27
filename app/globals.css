@@ -201,3 +201,66 @@
 .dark .logo-masked {
   background-color: #70e6b7; /* green for dark mode */
 }
+
+.bg-brand-gradient {
+  @apply min-h-screen;
+  background: linear-gradient(135deg, #c28af9 0%, #70e6b7 100%);
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.bg-noise-overlay {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background-image: url('/textures/noise.png');
+  background-repeat: repeat;
+  opacity: 0.06; /* Very subtle */
+  mix-blend-mode: overlay;
+}
+
+/* Dark mode overlay for background gradient */
+.dark .dark-bg-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.3);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-radial-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.hero-radial-bg::before,
+.hero-radial-bg::after {
+  content: "";
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+  opacity: 0.25;
+}
+.hero-radial-bg::before {
+  top: -120px;
+  left: -120px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle at top left, #c28af9 0%, transparent 80%);
+}
+.hero-radial-bg::after {
+  bottom: -120px;
+  right: -120px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle at bottom right, #70e6b7 0%, transparent 80%);
+}
