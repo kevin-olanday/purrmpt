@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SlidersHorizontal, Text, Brain, Wand2, User, Palette, Clipboard, Send, Share2, Sparkles } from "lucide-react";
+import { SlidersHorizontal, Text, Brain, Wand2, User, Palette, Clipboard, Send, Share2, Sparkles, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -298,15 +298,6 @@ export default function PurrmptApp() {
     }
   };
 
-  const handleSendToGemini = () => {
-    if (generatedPrompt) {
-      const encodedPrompt = encodeURIComponent(generatedPrompt);
-      const bardUrl = `https://bard.google.com/?prompt=${encodedPrompt}`; // Google Bard's web URL with the prompt
-  
-      // Open Bard in a new tab
-      window.open(bardUrl, "_blank");
-    }
-  };
 
   const handleSharePrompt = () => {
     if (generatedPrompt) {
@@ -327,10 +318,77 @@ export default function PurrmptApp() {
     }
   };
 
+  function getIdeaPlaceholder(promptType: string, role: string) {
+    // Text
+    if (promptType === "text") {
+      switch (role) {
+        case "Copywriter":
+          return "e.g., Write a catchy headline for a new eco-friendly water bottle";
+        case "Novelist":
+          return "e.g., A detective haunted by a mysterious past in 1920s Paris";
+        case "Academic Researcher":
+          return "e.g., Summarize the impact of climate change on polar bear populations";
+        case "SEO Specialist":
+          return "e.g., Blog post outline for 'Best laptops for remote work in 2025'";
+        case "Customer Support Agent":
+          return "e.g., Respond to a customer asking for a refund due to late delivery";
+        case "Philosopher":
+          return "e.g., Explore the meaning of happiness in modern society";
+        case "Educator":
+          return "e.g., Explain photosynthesis to 8th grade students";
+        default:
+          return "e.g., A cyberpunk cat exploring Tokyo";
+      }
+    }
+    // Image
+    if (promptType === "image") {
+      switch (role) {
+        case "Concept Artist":
+          return "e.g., Futuristic city skyline at sunset with flying cars";
+        case "Graphic Designer":
+          return "e.g., Minimalist poster for a jazz music festival";
+        case "Photographer":
+          return "e.g., Misty forest at dawn with sunbeams through the trees";
+        case "Fantasy Illustrator":
+          return "e.g., Dragon perched atop a snowy mountain under northern lights";
+        case "UI/UX Designer":
+          return "e.g., Mobile app splash screen with playful animal mascots";
+        case "Fashion Designer":
+          return "e.g., Avant-garde evening gown inspired by ocean waves";
+        case "Architect":
+          return "e.g., Modern eco-friendly cabin in the woods";
+        default:
+          return "e.g., A cyberpunk cat exploring Tokyo, neon lights, rainy night";
+      }
+    }
+    // Code
+    if (promptType === "code") {
+      switch (role) {
+        case "Software Engineer":
+          return "e.g., REST API endpoint for user authentication in Node.js";
+        case "Data Scientist":
+          return "e.g., Python script to analyze sales data and plot monthly trends";
+        case "Frontend Developer":
+          return "e.g., Responsive navbar with dropdown menus in React";
+        case "DevOps Engineer":
+          return "e.g., GitHub Actions workflow for CI/CD deployment";
+        case "Security Analyst":
+          return "e.g., Script to scan for open ports and report vulnerabilities";
+        case "Technical Writer":
+          return "e.g., Step-by-step guide for installing Docker on Windows";
+        default:
+          return "e.g., Function to reverse a string in JavaScript";
+      }
+    }
+    // Fallback
+    return "e.g., Describe your idea here";
+  }
+  
+
   return (
     <TooltipProvider>
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 py-8 md:py-12 max-w-7xl xl:max-w-8xl w-full flex flex-col">
+      <main className="flex-1 container mx-auto px-4 py-6 md:py-12 max-w-7xl xl:max-w-8xl w-full flex flex-col">
         {/* Hero Section */}
         <div className="relative mb-12">
           {/* Radial gradients for depth */}
@@ -340,7 +398,7 @@ export default function PurrmptApp() {
           <AnimatedSparkleGroup count={6} />
 
           {/* Main hero content */}
-          <div className="relative z-10 text-center">
+          <div className="relative z-10 text-center ">
             <h2 className="text-2xl md:text-3xl font-semibold mb-2 flex items-center justify-center gap-2">
               Turn your ideas into purrfect prompts
               <Sparkles className="h-5 w-5 text-secondary relative animate-bounce" />
@@ -383,7 +441,7 @@ export default function PurrmptApp() {
               </label>
               <Textarea
                 id="idea"
-                placeholder="e.g., A cyberpunk cat exploring Tokyo"
+                placeholder={getIdeaPlaceholder(promptType, selectedRole)}
                 className="min-h-[150px] resize-none rounded-xl focus:ring-primary"
                 value={idea}
                 onChange={(e) => setIdea(e.target.value)}
@@ -393,6 +451,7 @@ export default function PurrmptApp() {
             {/* Advanced Prompt Options */}
             <div className="p-6 rounded-2xl border shadow-md bg-card">
               <Button
+                type="button" 
                 variant="outline"
                 className="w-full flex items-center justify-between"
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
@@ -401,7 +460,7 @@ export default function PurrmptApp() {
                   <span className="mr-2">
                     <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" strokeWidth="1.5"/><path d="M19.5 12c0-.563.06-1.11.175-1.635a1.5 1.5 0 0 0-.326-1.47l-1.1-1.1a1.5 1.5 0 0 1 0-2.12l.78-.78a1.5 1.5 0 0 0 0-2.12l-1.06-1.06a1.5 1.5 0 0 0-2.12 0l-.78.78a1.5 1.5 0 0 1-2.12 0l-1.1-1.1a1.5 1.5 0 0 0-1.47-.326A7.5 7.5 0 0 0 6 4.5c-.563 0-1.11.06-1.635.175a1.5 1.5 0 0 0-1.47.326l-1.1 1.1a1.5 1.5 0 0 1-2.12 0l-.78-.78a1.5 1.5 0 0 0-2.12 0l-1.06 1.06a1.5 1.5 0 0 0 0 2.12l.78.78a1.5 1.5 0 0 1 0 2.12l-1.1 1.1a1.5 1.5 0 0 0-.326 1.47A7.5 7.5 0 0 0 4.5 12c0 .563-.06 1.11-.175 1.635a1.5 1.5 0 0 0 .326 1.47l1.1 1.1a1.5 1.5 0 0 1 0 2.12l-.78.78a1.5 1.5 0 0 0 0 2.12l1.06 1.06a1.5 1.5 0 0 0 2.12 0l.78-.78a1.5 1.5 0 0 1 2.12 0l1.1 1.1a1.5 1.5 0 0 0 1.47.326A7.5 7.5 0 0 0 12 19.5c.563 0 1.11-.06 1.635-.175a1.5 1.5 0 0 0 1.47-.326l1.1-1.1a1.5 1.5 0 0 1 2.12 0l.78.78a1.5 1.5 0 0 0 2.12 0l1.06-1.06a1.5 1.5 0 0 0 0-2.12l-.78-.78a1.5 1.5 0 0 1 0-2.12l1.1-1.1a1.5 1.5 0 0 0 .326-1.47A7.5 7.5 0 0 0 19.5 12Z" stroke="currentColor" strokeWidth="1.5"/></svg>
                   </span>
-                  Show Advanced Prompt Options (Optional)
+                  Show Advanced Prompt Options
                 </span>
                 <span>
                   <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" strokeWidth="1.5"/></svg>
@@ -530,35 +589,54 @@ export default function PurrmptApp() {
               onClick={handleGeneratePrompt}
               disabled={!idea.trim() || isGenerating}
             >
-              {isGenerating ? "Generating..." : "Generate Prompt"}
+              {isGenerating ? (
+                <>
+                  <Loader2 className="animate-spin w-5 h-5 mr-2" />
+                  Generating...
+                </>
+              ) : (
+                "Generate Prompt"
+              )}
             </Button>
           </form>
 
           {/* Right Column */}
           <div className="space-y-6 lg:sticky lg:top-8">
             {/* Enhanced Output */}
-            {generatedPrompt ? (
-              <div className="p-6 rounded-2xl border shadow-md bg-card">
-                <h3 className="text-lg font-medium mb-4 flex items-center">
-                  <Wand2 className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
-                  Enhanced Prompt
-                </h3>
-                <div className="rounded-xl p-5 bg-muted whitespace-pre-wrap">{generatedPrompt}</div>
-              </div>
-            ) : (
-              <div className="p-6 rounded-2xl border shadow-md bg-card">
-                <p className="text-muted-foreground">Your enhanced prompt will appear here.</p>
-              </div>
-            )}
+            <motion.div
+              key={isGenerating ? "loading" : generatedPrompt || "empty"}
+              initial={{ opacity: 0, scale: 0.97, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              {isGenerating ? (
+                <div className="p-6 rounded-2xl border shadow-md bg-card flex items-center justify-center min-h-[120px]">
+                  <Loader2 className="animate-spin w-8 h-8 text-muted-foreground" />
+                  <span className="ml-3 text-muted-foreground">Enhancing your prompt...</span>
+                </div>
+              ) : generatedPrompt ? (
+                <div className="p-6 rounded-2xl border shadow-md bg-card">
+                  <h3 className="text-lg font-medium mb-4 flex items-center">
+                    <Wand2 className="w-4 h-4 text-muted-foreground mr-2" aria-hidden="true" />
+                    Enhanced Prompt
+                  </h3>
+                  <div className="rounded-xl p-5 bg-muted whitespace-pre-wrap">{generatedPrompt}</div>
+                </div>
+              ) : (
+                <div className="p-6 rounded-2xl border shadow-md bg-card">
+                  <p className="text-muted-foreground">Your enhanced prompt will appear here.</p>
+                </div>
+              )}
+            </motion.div>
 
             {/* Copy and Send Buttons */}
-            {generatedPrompt && (
+            {generatedPrompt && !isGenerating && (
               <div className="flex flex-wrap gap-4">
                 {/* Copy Button */}
                 <CopyButton generatedPrompt={generatedPrompt} />
 
                 {/* Send to ChatGPT Button */}
-                <Button
+                <Button                
                   variant="outline"
                   className="inline-flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white transition-all"
                   onClick={handleSendToChatGPT}
