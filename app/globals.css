@@ -293,3 +293,39 @@
     transform: translateX(100%);
   }
 }
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 5s ease-in-out infinite;
+}
+
+.bg-glass-gradient {
+  background-image: linear-gradient(
+    to right,
+    rgba(109, 40, 217, 0.7),
+    rgba(79, 70, 229, 0.7)
+  );
+  backdrop-filter: blur(12px);
+}
+
+.shadow-soft {
+  box-shadow: 0 4px 30px rgba(80, 0, 150, 0.2);
+}
+
+.border-soft {
+  border: 1px solid rgba(129, 140, 248, 0.3);
+}
+
+.text-soft-purple {
+  color: #d8b4fe;
+}

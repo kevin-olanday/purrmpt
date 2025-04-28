@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { prisma } from "@/lib/prisma";
+
+// Helper to get today's date as YYYY-MM-DD
+function getToday() {
+  const now = new Date();
+  return now.toISOString().slice(0, 10);
+}
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 if (!OPENAI_API_KEY) {
@@ -234,6 +241,17 @@ ${enhancementInstructions}
 `.trim();
 }
 
+export async function GET() {
+  const today = getToday();
+  let counter = await prisma.purrmptCounter.findUnique({ where: { date: today } });
+  if (!counter) {
+    counter = await prisma.purrmptCounter.create({
+      data: { date: today, count: 0 },
+    });
+  }
+  return NextResponse.json({ count: counter.count });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as PromptRequestBody;
@@ -274,7 +292,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No response from OpenAI." }, { status: 500 });
     }
 
-    return NextResponse.json({ result }, { status: 200 });
+    const today = getToday();
+    let counter = await prisma.purrmptCounter.findUnique({ where: { date: today } });
+    if (!counter) {
+      counter = await prisma.purrmptCounter.create({
+        data: { date: today, count: 1 },
+      });
+    } else {
+      counter = await prisma.purrmptCounter.update({
+        where: { date: today },
+        data: { count: { increment: 1 } },
+      });
+    }
+
+    return NextResponse.json({ result, count: counter.count }, { status: 200 });
   } catch (error: any) {
     if (process.env.NODE_ENV === "development") {
       console.error("OpenAI API error:", error?.response?.data || error?.message || error);

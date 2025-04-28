@@ -10,9 +10,10 @@ import { useTheme } from "next-themes";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
 import { Sparkle } from "@/components/sparkle";
-import React from "react";
-
+import { useCounterRefresh } from "@/components/counter-refresh-context";import React from "react";
+import { PurrmptCounter } from "@/components/purrmpt-counter";
 const SPARKLE_COLORS = ["#A78BFA", "#6EE7B7", "#FBBF24", "#c28af9", "#70e6b7"];
+
 
 type SparkleData = {
   left: number;
@@ -197,10 +198,16 @@ export function useRandomPlaceholder({
   selectedRole: string;
   inputValue: string;
 }) {
-  const [placeholder, setPlaceholder] = useState(() => {
-    const idx = Math.floor(Math.random() * CAT_PLACEHOLDERS.length);
-    return CAT_PLACEHOLDERS[idx];
-  });
+  const [placeholder, setPlaceholder] = useState<string>("");
+
+  useEffect(() => {
+    // Only run on client after mount
+    if (typeof window !== "undefined") {
+      const idx = Math.floor(Math.random() * CAT_PLACEHOLDERS.length);
+      setPlaceholder(CAT_PLACEHOLDERS[idx]);
+    }
+  }, [promptType, selectedRole]);
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -318,7 +325,7 @@ export default function PurrmptApp() {
   const [selectedStyle, setSelectedStyle] = useState(DEFAULT_OPTIONS.text.style);
   const [length, setLength] = useState(DEFAULT_OPTIONS.text.length);
   const [creativity, setCreativity] = useState(DEFAULT_OPTIONS.text.creativity);
-
+  const refreshCounter = useCounterRefresh();
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -368,6 +375,9 @@ export default function PurrmptApp() {
 
       if (response.ok) {
         setGeneratedPrompt(data.result || "Error generating response");
+        if (refreshCounter) {
+          refreshCounter.refresh();
+        }
       } else {
         console.error(data.error || "An error occurred while generating the prompt.");
       }
@@ -507,6 +517,7 @@ export default function PurrmptApp() {
             <p className="text-sm md:text-base text-muted-foreground mt-2">
             Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱
             </p>
+            <PurrmptCounter refresh={refreshCounter?.value} />
           </div>
         </div>
 

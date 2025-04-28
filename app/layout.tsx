@@ -9,7 +9,8 @@ import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-
+import { PurrmptCounter } from "@/components/purrmpt-counter";
+import { CounterRefreshContext } from "@/components/counter-refresh-context";
 // 1. ClientOnly component
 function ClientOnly({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -25,6 +26,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [counterRefresh, setCounterRefresh] = useState(0);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -87,7 +90,12 @@ export default function RootLayout({
                 text-base
               "
             >
-              {children}
+              <CounterRefreshContext.Provider value={{
+                refresh: () => setCounterRefresh(r => r + 1),
+                value: counterRefresh
+              }}>
+                {children}
+              </CounterRefreshContext.Provider>
             </motion.div>
           </main>
           {/* Footer */}
