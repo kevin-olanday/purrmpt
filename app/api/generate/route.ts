@@ -241,16 +241,7 @@ ${enhancementInstructions}
 `.trim();
 }
 
-export async function GET() {
-  const today = getToday();
-  let counter = await prisma.purrmptCounter.findUnique({ where: { date: today } });
-  if (!counter) {
-    counter = await prisma.purrmptCounter.create({
-      data: { date: today, count: 0 },
-    });
-  }
-  return NextResponse.json({ count: counter.count });
-}
+
 
 export async function POST(req: NextRequest) {
   try {
@@ -292,20 +283,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No response from OpenAI." }, { status: 500 });
     }
 
+    // --- Updated Counter Logic (run in background, don't await) ---
     const today = getToday();
-    let counter = await prisma.purrmptCounter.findUnique({ where: { date: today } });
-    if (!counter) {
-      counter = await prisma.purrmptCounter.create({
-        data: { date: today, count: 1 },
-      });
-    } else {
-      counter = await prisma.purrmptCounter.update({
-        where: { date: today },
-        data: { count: { increment: 1 } },
-      });
-    }
+    (async () => {
+      try {
+        await prisma.globalCounter.upsert({
+          where: { id: 1 },
+          update: { count: { increment: 1 } },
+          create: { id: 1, count: 1 },
+        });
+        await prisma.dailyCounter.upsert({
+          where: { date: today },
+          update: { count: { increment: 1 } },
+          create: { date: today, count: 1 },
+        });
+      } catch (e) {
+        // Optionally log error, but don't block the response
+        if (process.env.NODE_ENV === "development") {
+          console.error("Counter update failed:", e);
+        }
+      }
+    })();
 
-    return NextResponse.json({ result, count: counter.count }, { status: 200 });
+    return NextResponse.json({ result }, { status: 200 });
   } catch (error: any) {
     if (process.env.NODE_ENV === "development") {
       console.error("OpenAI API error:", error?.response?.data || error?.message || error);

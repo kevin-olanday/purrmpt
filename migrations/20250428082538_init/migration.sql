@@ -1,8 +1,10 @@
 -- CreateTable
 CREATE TABLE "PurrmptCounter" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" SERIAL NOT NULL,
     "date" TEXT NOT NULL,
-    "count" INTEGER NOT NULL DEFAULT 0
+    "count" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "PurrmptCounter_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex

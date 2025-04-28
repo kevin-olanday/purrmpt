@@ -8,12 +8,28 @@ export function PurrmptCounter({ refresh }: { refresh?: number }) {
   const [total, setTotal] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("/api/purrmpt-count/total")
-      .then((res) => res.json())
-      .then((data) => setTotal(data.total));
+    let isMounted = true;
+    let interval: NodeJS.Timeout;
+
+    const fetchCount = () => {
+      fetch("/api/purrmpt-count/total")
+        .then((res) => res.json())
+        .then((data) => {
+          if (isMounted) setTotal(data.total);
+        });
+    };
+
+    fetchCount(); // initial fetch
+
+    interval = setInterval(fetchCount, 5000); // poll every 5 seconds
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [refresh]);
 
-  if (total === null) return null; // Optional early return
+  if (total === null) return null;
 
   return (
     <div
