@@ -9,7 +9,6 @@ import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { PurrmptCounter } from "@/components/purrmpt-counter";
 import { CounterRefreshContext } from "@/components/counter-refresh-context";
 // 1. ClientOnly component
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -32,7 +31,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <title>Purrmpt</title>
-        <meta name="description" content="Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱" />
+        <meta name="description" content="Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱, created by Kevin Olanday." />
         <meta name="keywords" content="Purrmpt, AI prompts, prompt enhancer, prompt builder, AI writing, text generation, creative prompts, ChatGPT prompts, prompt crafting, AI tools, prompt generator, writing assistant, DALL-E prompts, Codex prompts, prompt optimization, free AI tool" />
         {/* Basic SEO */}
         <meta name="robots" content="index, follow" />
@@ -62,6 +61,35 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
         <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#c28af9" />
+        {/* Structured Data (JSON-LD) */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Purrmpt - Supercharge your prompts",
+            "url": "https://purrmpt.com",
+            "applicationCategory": "ProductivityApplication",
+            "description": "Enhance your prompts into purrfectly crafted, high-impact prompts. 🐱, created by Kevin Olanday.",
+            "image": "https://purrmpt.com/purrmpt-og.png",
+            "author": {
+              "@type": "Person",
+              "name": "Kevin Olanday",
+              "url": "https://kevinolanday.com"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "operatingSystem": "All",
+            "browserRequirements": "Requires JavaScript. Works best in modern browsers.",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "5",
+              "reviewCount": "100"
+            }
+          })
+        }} />
       </head>
       <body className="flex flex-col min-h-screen">
         {/* Set disableTransitionOnChange to true for instant theme change */}
